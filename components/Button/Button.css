@@ -1,0 +1,39 @@
+.button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.button:hover:not(:disabled) {
+  color: #111827;
+}
+
+.button:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.danger {
+  color: #ef4444;
+  opacity: 0.8;
+}
+
+.danger:hover:not(:disabled) {
+  color: #dc2626;
+  opacity: 1;
+}
+
+.primary,
+.outline {
+  background: none;
+  border: none;
+}

@@ -1,0 +1,54 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.logo {
+  text-decoration: none;
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.logo:hover {
+  color: #ddd;
+}
+
+.navigation {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navigation li a,
+.navigation li button {
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.navigation li a:hover,
+.navigation li button:hover {
+  color: #ddd;
+}
+
+.navigation li a:active,
+.navigation li button:active {
+  color: white;
+  background: none;
+}
