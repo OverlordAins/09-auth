@@ -12,9 +12,14 @@ export default async function proxy(request: NextRequest) {
 
   const isPrivateRoute =
     pathname.startsWith('/notes') || pathname.startsWith('/profile');
+
   const isAuthRoute =
     pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
 
+  /**
+   * Попытка обновить сессию, если accessToken отсутствует,
+   * но refreshToken есть
+   */
   if (!accessToken && refreshToken) {
     try {
       const response = await checkSession();
@@ -45,15 +50,31 @@ export default async function proxy(request: NextRequest) {
 
         return nextResponse;
       }
-    } catch {
-      console.error('Middleware Refresh Error');
+
+      // если refresh прошёл, но cookies не пришли — считаем сессию невалидной
+      if (isPrivateRoute) {
+        return NextResponse.redirect(new URL('/sign-in', request.url));
+      }
+    } catch (error) {
+      console.error('Middleware Refresh Error', error);
+
+      // КРИТИЧНО: при ошибке обновления сессии
+      if (isPrivateRoute) {
+        return NextResponse.redirect(new URL('/sign-in', request.url));
+      }
     }
   }
 
+  /**
+   * Полностью неавторизованный пользователь
+   */
   if (isPrivateRoute && !accessToken && !refreshToken) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
+  /**
+   * Авторизованный пользователь на auth-странице
+   */
   if (isAuthRoute && accessToken) {
     return NextResponse.redirect(new URL('/', request.url));
   }

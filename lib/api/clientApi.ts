@@ -4,12 +4,12 @@ import { Note } from '@/types/note';
 
 export interface RegisterRequest {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface LoginRequest {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface FetchNotesParams {
