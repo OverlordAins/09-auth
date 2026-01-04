@@ -3,6 +3,7 @@ import { Roboto } from 'next/font/google';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import { Providers } from './providers';
+import AuthProvider from '@/components/AuthProvider/AuthProvider';
 import './globals.css';
 
 const roboto = Roboto({
@@ -20,8 +21,7 @@ export const metadata: Metadata = {
     title: 'NoteHub - Твій простір для нотаток',
     description:
       'Зберігайте свої ідеї та плануйте завдання в зручному застосунку NoteHub.',
-    url: 'https://08-zustand-tau-two.vercel.app/',
-    siteName: 'NoteHub',
+    url: 'https://09-auth-your-project.vercel.app',
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
@@ -44,22 +44,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk">
-      <body
-        className={roboto.className}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          margin: 0,
-        }}
-      >
+      <body className={roboto.className}>
         <Providers>
-          <Header />
-          <main style={{ flex: '1 0 auto' }}>{children}</main>
-
-          {modal}
-
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
+            {modal}
+            <Footer />
+          </AuthProvider>
         </Providers>
       </body>
     </html>

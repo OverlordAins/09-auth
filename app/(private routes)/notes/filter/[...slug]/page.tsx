@@ -3,7 +3,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
+
+import { fetchNotesServer } from '@/lib/api/serverApi';
 import NotesClient from './Notes.client';
 import { Metadata } from 'next';
 
@@ -25,7 +26,7 @@ export async function generateMetadata({
     openGraph: {
       title: `Notes: ${displayTag} | NoteHub`,
       description: `Browse all notes filtered by category: ${displayTag}`,
-      url: `https://08-zustand-tau-two.vercel.app/notes/filter/${tagFromUrl}`,
+      url: `https://ваша-адреса.vercel.app/notes/filter/${tagFromUrl}`,
       images: [
         {
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
@@ -40,13 +41,15 @@ export default async function FilteredNotesPage({ params }: PageProps) {
   const { slug } = await params;
 
   const tagFromUrl = slug?.[0];
-  const tag = tagFromUrl?.toLowerCase() === 'all' ? undefined : tagFromUrl;
+
+  const tag = tagFromUrl?.toLowerCase() === 'all' ? '' : tagFromUrl;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ['notes', tag, '', 1],
-    queryFn: () => fetchNotes({ tag, search: '', page: 1 }),
+
+    queryFn: () => fetchNotesServer({ tag, search: '', page: 1 }),
   });
 
   return (

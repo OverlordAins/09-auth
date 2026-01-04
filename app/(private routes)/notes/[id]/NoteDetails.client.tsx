@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { fetchNoteById } from '@/lib/api';
+import { fetchNoteById } from '@/lib/api/clientApi';
 import css from './NoteDetails.module.css';
 
 interface NoteDetailsClientProps {
@@ -15,6 +15,7 @@ export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
   const { data: note, isLoading } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
+    staleTime: 1000 * 60 * 5,
   });
 
   if (isLoading) return <div className={css.container}>Loading...</div>;
