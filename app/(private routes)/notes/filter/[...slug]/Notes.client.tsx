@@ -1,64 +1,63 @@
 'use client';
+import css from './NotesPage.module.css';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api/clientApi';
-import { useDebounce } from '@/components/hooks/useDebounce';
 import NoteList from '@/components/NoteList/NoteList';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import Pagination from '@/components/Pagination/Pagination';
 import SearchBox from '@/components/SearchBox/SearchBox';
-import styles from './NotesPage.module.css';
+import { useDebounce } from 'use-debounce';
+import toast, { Toaster } from 'react-hot-toast';
+import Loader from '@/components/Loader/Loader';
+import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
+import { fetchNotes } from '@/lib/api/clientApi';
+import Button from '@/components/Button/Button';
 
 interface NotesClientProps {
   tag?: string;
 }
 
 export default function NotesClient({ tag }: NotesClientProps) {
-  const [search, setSearch] = useState('');
+  const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
-  const debouncedSearch = useDebounce(search, 500);
+  const [searchTextDebounce] = useDebounce(searchText, 500);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', tag, debouncedSearch, currentPage],
-    queryFn: () =>
-      fetchNotes({ tag, search: debouncedSearch, page: currentPage }),
+    queryKey: ['notes', searchTextDebounce, currentPage, tag],
+    queryFn: () => fetchNotes(searchTextDebounce, currentPage, tag),
+    placeholderData: keepPreviousData,
   });
 
-  if (isLoading) return <div className={styles.app}>Loading...</div>;
-  if (isError) return <div className={styles.app}>Error loading notes.</div>;
+  useEffect(() => {
+    if (data?.notes && data.notes.length < 1) {
+      toast.error('No notes found for your request.');
+    }
+  }, [data]);
+
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className={styles.app}>
-      <header className={styles.toolbar}>
-        <SearchBox
-          value={search}
-          onChange={val => {
-            setSearch(val);
-            setCurrentPage(1);
-          }}
-        />
-        <div className={styles.paginationWrapper}>
-          {data && data.totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={data.totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
-        </div>
-
-        <Link href="/notes/action/create" className={styles.button}>
+    <div className={css.app}>
+      <header className={css.toolbar}>
+        <SearchBox search={searchText} onChange={handleSearch} />
+        {data && data.totalPages > 1 && (
+          <Pagination
+            totalPages={data.totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        )}
+        <Button variant="primary" href="/notes/action/create">
           Create note +
-        </Link>
+        </Button>
       </header>
-
-      {data && data.notes.length > 0 ? (
-        <NoteList notes={data.notes} />
-      ) : (
-        <p className={styles.empty}>No notes found.</p>
-      )}
+      <Toaster />
+      {isError && <ErrorMessage />}
+      {isLoading && <Loader />}
+      {data?.notes && <NoteList notes={data.notes} />}
     </div>
   );
 }

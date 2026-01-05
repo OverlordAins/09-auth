@@ -1,45 +1,45 @@
-import { notFound } from 'next/navigation';
 import {
-  dehydrate,
-  HydrationBoundary,
   QueryClient,
+  HydrationBoundary,
+  dehydrate,
 } from '@tanstack/react-query';
+
 import { fetchNoteByIdServer } from '@/lib/api/serverApi';
 import NoteDetailsClient from './NoteDetails.client';
 import { Metadata } from 'next';
 
-interface Props {
+interface NoteDetailsProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: NoteDetailsProps): Promise<Metadata> {
   const { id } = await params;
   const note = await fetchNoteByIdServer(id);
 
-  if (!note) {
-    return {
-      title: 'Note Not Found | NoteHub',
-    };
-  }
-
   return {
-    title: `${note.title} | NoteHub`,
-    description: note.content.substring(0, 150),
+    title: `Note: ${note.title}`,
+    description: note.content.slice(0, 30),
     openGraph: {
-      title: note.title,
-      description: note.content.substring(0, 150),
-      url: `https://08-zustand-tau-two.vercel.app/notes/${id}`,
+      title: `Note: ${note.title}`,
+      description: note.content.slice(0, 100),
+      url: `https://09-auth-delta-sepia.vercel.app/notes/${id}`,
+      siteName: 'NoteHub',
       images: [
         {
-          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
+          width: 1200,
+          height: 630,
           alt: note.title,
         },
       ],
+      type: 'article',
     },
   };
 }
 
-export default async function NotePage({ params }: Props) {
+async function NoteDetails({ params }: NoteDetailsProps) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
@@ -48,17 +48,11 @@ export default async function NotePage({ params }: Props) {
     queryFn: () => fetchNoteByIdServer(id),
   });
 
-  const note = await fetchNoteByIdServer(id);
-
-  if (!note) {
-    return notFound();
-  }
-
-  const state = dehydrate(queryClient);
-
   return (
-    <HydrationBoundary state={state}>
-      <NoteDetailsClient id={id} />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NoteDetailsClient />
     </HydrationBoundary>
   );
 }
+
+export default NoteDetails;

@@ -1,1 +1,1 @@
-declare module 'use-debounce';
+// declare module 'use-debounce';

@@ -1,48 +1,40 @@
 'use client';
 
+import css from './SignUp.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { register, RegisterRequest } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
-import css from './SignUpPage.module.css';
+import Button from '@/components/Button/Button';
+import { AxiosError } from 'axios';
 
-interface AuthErrorResponse {
-  message?: string;
-}
-
-export default function SignUpPage() {
+export default function SignUp() {
   const router = useRouter();
+  const [error, setError] = useState('');
   const setUser = useAuthStore(state => state.setUser);
-  const [error, setError] = useState<string | null>(null);
 
-  const mutation = useMutation({
-    mutationFn: register,
-    onSuccess: data => {
-      setUser(data);
-      router.push('/profile');
-    },
-    onError: (err: AxiosError<AuthErrorResponse>) => {
-      const serverMessage = err.response?.data?.message;
-      setError(serverMessage || 'Registration failed');
-    },
-  });
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      const formValues = Object.fromEntries(formData) as RegisterRequest;
+      const res = await register(formValues);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const credentials = Object.fromEntries(
-      formData
-    ) as unknown as RegisterRequest;
-    mutation.mutate(credentials);
+      if (res) {
+        setUser(res);
+        router.push('/profile');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+
+      setError(axiosError.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (
     <main className={css.mainContent}>
-      <h1 className={css.formTitle}>Sign up</h1>
-
-      <form className={css.form} onSubmit={handleSubmit}>
+      <form className={css.form} action={handleSubmit}>
+        <h1 className={css.formTitle}>Sign up</h1>
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -66,16 +58,12 @@ export default function SignUpPage() {
         </div>
 
         <div className={css.actions}>
-          <button
-            type="submit"
-            className={css.submitButton}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? 'Registering...' : 'Register'}
-          </button>
+          <Button type="submit" variant="submit">
+            Register
+          </Button>
         </div>
 
-        {error && <p className={css.error}>{error}</p>}
+        <p className={css.error}>{error}</p>
       </form>
     </main>
   );

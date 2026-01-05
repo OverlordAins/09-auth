@@ -1,64 +1,94 @@
 .list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  list-style: none;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
   padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
-.noteCard {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 20px;
+.listItem {
   background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 180px;
 }
 
 .title {
-  margin: 0 0 10px 0;
-  font-size: 1.25rem;
-  color: #111827;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #212529;
 }
 
 .content {
-  color: #4b5563;
-  font-size: 0.95rem;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin: 0;
+  flex-grow: 1;
+  font-size: 14px;
+  color: #495057;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.tag {
-  display: inline-block;
-  background-color: #f3f4f6;
-  color: #374151;
-  padding: 2px 8px;
+.button {
+  align-self: flex-end;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #dc3545;
+  border: none;
   border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  align-self: flex-start;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.actions {
+.button:hover {
+  background-color: #bb2d3b;
+}
+
+.footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 15px;
-  border-top: 1px solid #f3f4f6;
 }
 
-@media (max-width: 1200px) {
-  .list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #0d6efd;
+  background-color: #e7f1ff;
+  border: 1px solid #b6d4fe;
+  border-radius: 12px;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-@media (max-width: 800px) {
-  .list {
-    grid-template-columns: 1fr;
-  }
+
+.link {
+  align-self: flex-end;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #0d6efd; /* синій колір */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s ease;
+}
+
+.link:hover {
+  background-color: #0b5ed7;
 }

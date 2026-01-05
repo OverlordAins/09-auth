@@ -1,68 +1,55 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import css from './NotePreview.module.css';
 import { useQuery } from '@tanstack/react-query';
-
 import { fetchNoteById } from '@/lib/api/clientApi';
+import Loader from '@/components/Loader/Loader';
 import Modal from '@/components/Modal/Modal';
-import styles from './NotePreview.module.css';
-
 interface NotePreviewClientProps {
-  id: string;
+  id?: string;
 }
 
-export default function NotePreviewClient({ id }: NotePreviewClientProps) {
+function NotePreviewClient({ id }: NotePreviewClientProps) {
+  const params = useParams<{ id: string }>();
+  const noteId = id ?? params.id;
+
   const router = useRouter();
+
+  const close = () => router.back();
 
   const {
     data: note,
     isLoading,
-    isError,
+    error,
   } = useQuery({
-    queryKey: ['note', id],
-    queryFn: () => fetchNoteById(id),
+    queryKey: ['note', noteId],
+    queryFn: () => fetchNoteById(noteId),
     refetchOnMount: false,
   });
 
-  const handleClose = () => {
-    router.back();
-  };
+  if (isLoading) return <Loader />;
+
+  if (error || !note) return <p>Something went wrong.</p>;
+
+  const formattedDate = note.updatedAt
+    ? `Updated at: ${note.updatedAt}`
+    : `Created at: ${note.createdAt}`;
 
   return (
-    <Modal onClose={handleClose}>
-      <div className={styles.previewContainer}>
-        {isLoading && <p>Loading note details...</p>}
-
-        {isError && (
-          <div className={styles.error}>
-            <p>Failed to load note.</p>
-            <button onClick={handleClose}>Close</button>
+    <Modal onClose={close}>
+      <div className={css.container}>
+        <div className={css.item}>
+          <p className={css.tag}>{note.tag}</p>
+          <div className={css.header}>
+            <h2>{note.title}</h2>
           </div>
-        )}
-
-        {note && (
-          <article className={styles.noteContent}>
-            <header className={styles.header}>
-              <h2 className={styles.title}>{note.title}</h2>
-              <span className={styles.tag}>{note.tag}</span>
-            </header>
-
-            <div className={styles.body}>
-              <p>{note.content}</p>
-            </div>
-
-            <footer className={styles.footer}>
-              <button
-                type="button"
-                className={styles.closeBtn}
-                onClick={handleClose}
-              >
-                Close Preview
-              </button>
-            </footer>
-          </article>
-        )}
+          <p className={css.content}>{note.content}</p>
+          <p className={css.date}>{formattedDate}</p>
+        </div>
       </div>
     </Modal>
   );
 }
+
+export default NotePreviewClient;

@@ -1,84 +1,94 @@
-import { noteInstance } from './api';
+import { Note, CreateNoteData } from '@/types/note';
+import { nextServer } from './api';
 import { User } from '@/types/user';
-import { Note } from '@/types/note';
 
-export interface RegisterRequest {
-  email: string;
-  password: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface FetchNotesParams {
-  tag?: string;
-  search?: string;
-  page?: number;
-  perPage?: number;
-}
-
-export interface CreateNoteRequest {
-  title: string;
-  content: string;
-  tag: string;
-}
-
-export interface NotesResponse {
+export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
-export const register = async (userData: RegisterRequest): Promise<User> => {
-  const { data } = await noteInstance.post<User>('/auth/register', userData);
-  return data;
+export const fetchNotes = async (
+  searchText: string,
+  page: number,
+  tag?: string
+): Promise<FetchNotesResponse> => {
+  const response = await nextServer.get<FetchNotesResponse>('/notes', {
+    params: {
+      search: searchText,
+      page,
+      tag,
+      perPage: 12,
+    },
+  });
+  return response.data;
 };
 
-export const login = async (credentials: LoginRequest): Promise<User> => {
-  const { data } = await noteInstance.post<User>('/auth/login', credentials);
-  return data;
+export async function fetchNoteById(noteId: string): Promise<Note> {
+  const response = await nextServer.get<Note>(`/notes/${noteId}`);
+
+  return response.data;
+}
+
+export async function createNote(noteContent: CreateNoteData) {
+  const response = await nextServer.post<Note>('/notes', noteContent);
+  return response.data;
+}
+
+export async function deleteNote(noteID: string) {
+  const deletedNote = await nextServer.delete<Note>(`/notes/${noteID}`, {
+    headers: {
+      accept: 'application/json',
+    },
+  });
+  return deletedNote.data;
+}
+
+export type RegisterRequest = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+export async function register(data: RegisterRequest) {
+  const res = await nextServer.post<User>('/auth/register', data);
+  return res.data;
+}
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export const login = async (data: LoginRequest) => {
+  const res = await nextServer.post<User>('/auth/login', data);
+  return res.data;
 };
 
 export const logout = async (): Promise<void> => {
-  await noteInstance.post('/auth/logout');
+  await nextServer.post('/auth/logout');
 };
 
-export const checkSession = async (): Promise<User | null> => {
-  const { data } = await noteInstance.get<User | null>('/auth/session');
+type CheckSessionRequest = {
+  success: boolean;
+};
+
+export const checkSession = async () => {
+  const res = await nextServer.get<CheckSessionRequest>('/auth/session');
+  return res.data.success;
+};
+
+export const getMe = async () => {
+  const { data } = await nextServer.get<User>('/users/me');
   return data;
 };
 
-export const getMe = async (): Promise<User> => {
-  const { data } = await noteInstance.get<User>('/users/me');
-  return data;
+export type UpdateUserRequest = {
+  username: string;
+  email: string;
+  avatar?: string;
 };
 
-export const updateMe = async (userData: Partial<User>): Promise<User> => {
-  const { data } = await noteInstance.patch<User>('/users/me', userData);
-  return data;
-};
-
-export const fetchNotes = async (
-  params: FetchNotesParams
-): Promise<NotesResponse> => {
-  const { data } = await noteInstance.get<NotesResponse>('/notes', { params });
-  return data;
-};
-
-export const fetchNoteById = async (id: string): Promise<Note> => {
-  const { data } = await noteInstance.get<Note>(`/notes/${id}`);
-  return data;
-};
-
-export const createNote = async (
-  noteData: CreateNoteRequest
-): Promise<Note> => {
-  const { data } = await noteInstance.post<Note>('/notes', noteData);
-  return data;
-};
-
-export const deleteNote = async (id: string): Promise<Note> => {
-  const { data } = await noteInstance.delete<Note>(`/notes/${id}`);
+export const updateMe = async (payload: UpdateUserRequest) => {
+  const { data } = await nextServer.patch<User>('/users/me', payload);
   return data;
 };

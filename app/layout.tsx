@@ -1,58 +1,59 @@
+import css from './Home.module.css';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import Header from '@/components/Header/Header';
-import Footer from '@/components/Footer/Footer';
-import { Providers } from './providers';
-import AuthProvider from '@/components/AuthProvider/AuthProvider';
 import './globals.css';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
+import TanstackProvider from '@/components/TanStackProvider/TanStackProvider';
+import AuthProvider from '@/components/AuthProvider/AuthProvider';
 
 const roboto = Roboto({
-  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  weight: ['400', '700'],
   variable: '--font-roboto',
   display: 'swap',
-  subsets: ['latin', 'cyrillic'],
 });
 
 export const metadata: Metadata = {
-  title: 'NoteHub - Твій простір для нотаток',
+  title: 'NoteHub — Personal Notes Manager (Next.js Routing Demo)',
   description:
-    'Зберігайте свої ідеї та плануйте завдання в зручному застосунку NoteHub.',
+    'A simple Next.js application demonstrating file-based routing and page navigation. The project showcases clean structure, reusable layouts, and deployment on Vercel.',
   openGraph: {
-    title: 'NoteHub - Твій простір для нотаток',
+    title: 'NoteHub — Personal Notes Manager (Next.js Routing Demo)',
     description:
-      'Зберігайте свої ідеї та плануйте завдання в зручному застосунку NoteHub.',
-    url: 'https://09-auth-your-project.vercel.app',
+      'A simple Next.js application demonstrating file-based routing and page navigation. The project showcases clean structure, reusable layouts, and deployment on Vercel.',
+    url: `https://09-auth-delta-sepia.vercel.app`,
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'NoteHub Preview',
+        alt: 'Note Hub',
+        width: 300,
+        height: 300,
       },
     ],
-    locale: 'uk_UA',
-    type: 'website',
   },
 };
 
 export default function RootLayout({
   children,
   modal,
-}: {
+}: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="uk">
-      <body className={roboto.className}>
-        <Providers>
+    <html lang="en">
+      <body className={`${roboto.variable}`}>
+        <TanstackProvider>
           <AuthProvider>
             <Header />
-            <main>{children}</main>
-            {modal}
+            <main className={css.main}>
+              {children}
+              {modal}
+            </main>
             <Footer />
           </AuthProvider>
-        </Providers>
+        </TanstackProvider>
       </body>
     </html>
   );

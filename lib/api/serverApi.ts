@@ -1,62 +1,57 @@
 import { cookies } from 'next/headers';
-import { AxiosResponse, isAxiosError } from 'axios';
-import { noteInstance } from './api';
-import { User } from '@/types/user';
-import { Note } from '@/types/note';
-import { FetchNotesParams } from './clientApi';
+import { nextServer } from './api';
+import type { User } from '@/types/user';
+import type { Note } from '@/types/note';
+import type { FetchNotesResponse } from './clientApi';
 
-const getAuthHeaders = async () => {
+export const checkServerSession = async () => {
   const cookieStore = await cookies();
-  const allCookies = cookieStore.toString();
-  return {
-    Cookie: allCookies,
-  };
+  const res = await nextServer.get('/auth/session', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+
+  return res;
 };
 
-export const checkSession = async (): Promise<AxiosResponse> => {
-  const headers = await getAuthHeaders();
-  return await noteInstance.get('/auth/session', { headers });
+export const getServerMe = async (): Promise<User> => {
+  const cookieStore = await cookies();
+  const { data } = await nextServer.get('/users/me', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+  return data;
 };
 
-export const getMeServer = async (): Promise<User | null> => {
-  try {
-    const headers = await getAuthHeaders();
-    const { data } = await noteInstance.get<User>('/users/me', { headers });
-    return data;
-  } catch (error) {
-    if (isAxiosError(error) && error.response?.status !== 401) {
-      console.error('getMeServer Error:', error);
-    }
-    return null;
-  }
+export const fetchNotesServer = async (
+  searchText: string,
+  page: number,
+  tag?: string
+): Promise<FetchNotesResponse> => {
+  const cookieStore = await cookies();
+  const response = await nextServer.get<FetchNotesResponse>('/notes', {
+    params: {
+      search: searchText,
+      page,
+      tag,
+      perPage: 12,
+    },
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+  return response.data;
 };
 
-export const fetchNotesServer = async (params: FetchNotesParams) => {
-  try {
-    const headers = await getAuthHeaders();
-    const cleanParams = Object.fromEntries(
-      Object.entries(params).filter(([, value]) => value !== undefined)
-    );
-    const { data } = await noteInstance.get('/notes', {
-      params: cleanParams,
-      headers,
-    });
-    return data;
-  } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      console.error('Server Fetch Notes Error Data:', error.response.data);
-    }
-    return null;
-  }
-};
+export async function fetchNoteByIdServer(id: string): Promise<Note> {
+  const cookieStore = await cookies();
 
-export const fetchNoteByIdServer = async (id: string): Promise<Note | null> => {
-  try {
-    const headers = await getAuthHeaders();
-    const { data } = await noteInstance.get<Note>(`/notes/${id}`, { headers });
-    return data;
-  } catch (error) {
-    console.error('fetchNoteByIdServer Error:', error);
-    return null;
-  }
-};
+  const responseById = await nextServer.get<Note>(`/notes/${id}`, {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+  return responseById.data;
+}

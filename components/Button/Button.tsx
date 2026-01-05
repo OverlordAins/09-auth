@@ -1,29 +1,52 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
 import css from './Button.module.css';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'danger';
+type CommonProps = {
+  variant?: 'primary' | 'cancel' | 'submit';
+  size?: 'small' | 'medium' | 'large';
+  className?: string;
   children: React.ReactNode;
-}
+};
 
-export default function Button({
-  children,
+type ButtonOnlyProps = CommonProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    href?: never;
+  };
+
+type LinkOnlyProps = CommonProps & {
+  href: string;
+};
+
+type ButtonProps = ButtonOnlyProps | LinkOnlyProps;
+
+const Button = ({
   variant = 'primary',
+  size = 'medium',
+  href,
+  children,
   className,
   ...props
-}: ButtonProps) {
-  const variantClass =
-    variant === 'outline'
-      ? css.outline
-      : variant === 'danger'
-      ? css.danger
-      : css.primary;
+}: ButtonProps) => {
+  const classes = [css.button, css[variant], css[size], className]
+    .filter(Boolean)
+    .join(' ');
 
-  const buttonClass = `${css.button} ${variantClass} ${className || ''}`;
+  if (href) {
+    return (
+      <Link href={href} prefetch={false} className={classes}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
-    <button className={buttonClass} {...props}>
+    <button {...props} className={classes}>
       {children}
     </button>
   );
-}
+};
+
+export default Button;

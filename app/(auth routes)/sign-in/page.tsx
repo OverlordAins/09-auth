@@ -1,45 +1,40 @@
 'use client';
 
+import css from './SignIn.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { login, LoginRequest } from '@/lib/api/clientApi';
+
 import { useAuthStore } from '@/lib/store/authStore';
-import css from './SignInPage.module.css';
+import Button from '@/components/Button/Button';
+import { AxiosError } from 'axios';
 
-interface AuthErrorResponse {
-  message?: string;
-}
-
-export default function SignInPage() {
+export default function SignIn() {
   const router = useRouter();
+  const [error, setError] = useState('');
   const setUser = useAuthStore(state => state.setUser);
-  const [error, setError] = useState<string | null>(null);
 
-  const mutation = useMutation({
-    mutationFn: login,
-    onSuccess: data => {
-      setUser(data);
-      router.push('/profile');
-    },
-    onError: (err: AxiosError<AuthErrorResponse>) => {
-      const serverMessage = err.response?.data?.message;
-      setError(serverMessage || 'Invalid email or password');
-    },
-  });
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      const formValues = Object.fromEntries(formData) as LoginRequest;
+      const res = await login(formValues);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const credentials = Object.fromEntries(formData) as unknown as LoginRequest;
+      if (res) {
+        setUser(res);
+        router.push('/profile');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
 
-    mutation.mutate(credentials);
+      setError(axiosError.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (
     <main className={css.mainContent}>
-      <form className={css.form} onSubmit={handleSubmit}>
+      <form className={css.form} action={handleSubmit}>
         <h1 className={css.formTitle}>Sign in</h1>
 
         <div className={css.formGroup}>
@@ -65,16 +60,12 @@ export default function SignInPage() {
         </div>
 
         <div className={css.actions}>
-          <button
-            type="submit"
-            className={css.submitButton}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? 'Logging in...' : 'Log in'}
-          </button>
+          <Button type="submit" variant="submit">
+            Log in
+          </Button>
         </div>
 
-        {error && <p className={css.error}>{error}</p>}
+        <p className={css.error}>{error}</p>
       </form>
     </main>
   );

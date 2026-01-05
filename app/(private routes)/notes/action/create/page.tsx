@@ -1,35 +1,32 @@
-import { Metadata } from 'next';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import css from './CreateNote.module.css';
-export const revalidate = 0;
+import { Metadata } from 'next';
+
 export const metadata: Metadata = {
-  title: 'Create Note | NoteHub',
-  description:
-    'Create a new note. Your progress is automatically saved as a draft.',
+  title: 'Create Note',
+  description: 'Here you can create new note',
   openGraph: {
-    title: 'Create Note | NoteHub',
-    description:
-      'Create a new note. Your progress is automatically saved as a draft.',
-    url: 'https://08-zustand-tau-two.vercel.app/notes/action/create',
+    title: 'Create Note',
+    description: 'Here you can create new note',
+    url: `https://09-auth-delta-sepia.vercel.app/notes/action/create`,
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Create Note NoteHub',
+        alt: 'Create Note',
       },
     ],
   },
 };
 
-export default function CreateNote() {
+function CreateNote() {
   return (
     <main className={css.main}>
       <div className={css.container}>
         <h1 className={css.title}>Create note</h1>
-
         <NoteForm />
       </div>
     </main>
   );
 }
+
+export default CreateNote;

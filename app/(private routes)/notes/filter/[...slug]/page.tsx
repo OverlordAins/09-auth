@@ -1,65 +1,63 @@
-export const dynamic = 'force-dynamic';
 import {
-  dehydrate,
-  HydrationBoundary,
   QueryClient,
+  HydrationBoundary,
+  dehydrate,
 } from '@tanstack/react-query';
-
 import { fetchNotesServer } from '@/lib/api/serverApi';
 import NotesClient from './Notes.client';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 
-interface PageProps {
+type NotesByCategoryProps = {
   params: Promise<{ slug: string[] }>;
-}
+};
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: NotesByCategoryProps): Promise<Metadata> {
   const { slug } = await params;
-  const tagFromUrl = slug?.[0] || 'all';
-
-  const displayTag = tagFromUrl.charAt(0).toUpperCase() + tagFromUrl.slice(1);
-
+  const noteRaw = slug[0];
+  const isAll = noteRaw.toLowerCase() === 'all';
+  const title = `Notes:${noteRaw}`;
+  const filterTitle = isAll ? 'All notes' : `Notes filtered by ${noteRaw}`;
   return {
-    title: `Notes: ${displayTag} | NoteHub`,
-    description: `Browse all notes filtered by category: ${displayTag}`,
+    title: title,
+    description: isAll
+      ? 'Browse all available notes'
+      : `Browse notes filtered by category ${noteRaw}`,
     openGraph: {
-      title: `Notes: ${displayTag} | NoteHub`,
-      description: `Browse all notes filtered by category: ${displayTag}`,
-      url: `https://ваша-адреса.vercel.app/notes/filter/${tagFromUrl}`,
+      title: title,
+      description: filterTitle,
+      url: `https://ac.goit.global/fullstack/react/notehub-og-meta.jpg`,
+      siteName: 'NoteHub',
       images: [
         {
-          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-          alt: `NoteHub ${displayTag} Category`,
+          url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'NoteHub',
         },
       ],
+      type: 'article',
     },
   };
 }
 
-export default async function FilteredNotesPage({ params }: PageProps) {
+async function NotesByCategory({ params }: NotesByCategoryProps) {
   const { slug } = await params;
-
-  // const tagFromUrl = slug?.[0];
-
-  // const tag = tagFromUrl?.toLowerCase() === 'all' ? '' : tagFromUrl;
-
   const tag = slug[0] === 'all' ? undefined : slug[0];
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['notes', tag, '', 1],
-
-    queryFn: () => fetchNotesServer({ tag, search: '', page: 1 }),
+    queryKey: ['notes', '', 1, tag],
+    queryFn: () => fetchNotesServer('', 1, tag),
   });
 
   return (
-    <main>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <NotesClient tag={tag} />
-      </HydrationBoundary>
-    </main>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotesClient tag={tag} />
+    </HydrationBoundary>
   );
 }
+
+export default NotesByCategory;
