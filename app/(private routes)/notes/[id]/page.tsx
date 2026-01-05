@@ -1,3 +1,4 @@
+export const revalidate = 0;
 import { notFound } from 'next/navigation';
 import {
   dehydrate,
