@@ -1,5 +1,5 @@
 import styles from './Home.module.css';
-export const revalidate = 0;
+
 export default function Home() {
   return (
     <main className={styles.container}>

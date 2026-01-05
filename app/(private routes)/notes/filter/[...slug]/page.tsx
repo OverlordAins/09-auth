@@ -1,4 +1,3 @@
-export const revalidate = 0;
 import {
   dehydrate,
   HydrationBoundary,
