@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import {
   dehydrate,
   HydrationBoundary,
@@ -40,9 +41,11 @@ export async function generateMetadata({
 export default async function FilteredNotesPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const tagFromUrl = slug?.[0];
+  // const tagFromUrl = slug?.[0];
 
-  const tag = tagFromUrl?.toLowerCase() === 'all' ? '' : tagFromUrl;
+  // const tag = tagFromUrl?.toLowerCase() === 'all' ? '' : tagFromUrl;
+
+  const tag = slug[0] === 'all' ? undefined : slug[0];
 
   const queryClient = new QueryClient();
 
