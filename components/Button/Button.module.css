@@ -8,7 +8,7 @@
   font-size: 10px;
   line-height: 1;
   color: var(--light-color);
-  background-color: var(--secondary-color);
+  background-color: #57b2ee;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -32,7 +32,7 @@
 
 /* Variants */
 .button.primary {
-  background-color: var(--secondary-color);
+  background-color: #57b2ee;
 }
 
 .button.cancel {
