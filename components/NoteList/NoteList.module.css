@@ -7,7 +7,7 @@
 }
 
 .noteCard {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d6dae4;
   border-radius: 8px;
   padding: 20px;
   background-color: #ffffff;
@@ -20,11 +20,11 @@
 .title {
   margin: 0 0 10px 0;
   font-size: 1.25rem;
-  color: #111827;
+  color: #0d111b;
 }
 
 .content {
-  color: #4b5563;
+  color: #5a6474;
   font-size: 0.95rem;
   margin-bottom: 15px;
   line-height: 1.5;
@@ -32,8 +32,8 @@
 
 .tag {
   display: inline-block;
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #ebeef5;
+  color: #3e4757;
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -49,7 +49,7 @@
   align-items: center;
   margin-top: auto;
   padding-top: 15px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #ebeef5;
 }
 
 @media (max-width: 1200px) {

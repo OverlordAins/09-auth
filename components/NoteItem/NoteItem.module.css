@@ -9,7 +9,7 @@
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #dbdada;
 }
 
 .listItem:hover {
@@ -25,11 +25,11 @@
   margin: 0 0 10px 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #111827;
+  color: #0f1420;
 }
 
 .content {
-  color: #4b5563;
+  color: #3c4450;
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 16px;
@@ -45,16 +45,16 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 15px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #e5e6e7;
   margin-top: auto;
 }
 
 .tag {
   font-size: 0.75rem;
   padding: 4px 10px;
-  background: #f3f4f6;
+  background: #e5e6e7;
   border-radius: 20px;
-  color: #6b7280;
+  color: #6e7480;
   font-weight: 500;
 }
 
@@ -67,12 +67,12 @@
 .detailsLink {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2563eb;
+  color: #2966e9;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .detailsLink:hover {
-  color: #1d4ed8;
+  color: #1e49c0;
   text-decoration: underline;
 }

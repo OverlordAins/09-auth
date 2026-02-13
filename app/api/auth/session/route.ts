@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { api } from '../../api';
-import { parse } from 'cookie';
+import { NextResponse } from 'next/server';
 import { isAxiosError } from 'axios';
+import { parse } from 'cookie';
 import { logErrorResponse } from '../../_utils/utils';
 
 export async function GET() {
