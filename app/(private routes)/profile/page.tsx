@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getMeServer } from '@/lib/api/serverApi';
 import { redirect } from 'next/navigation';
-import css from './Profile.module.css';
+import css from './ProfilePage.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
