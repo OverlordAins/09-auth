@@ -4,21 +4,31 @@ import { cookies } from 'next/headers';
 import { isAxiosError } from 'axios';
 import { logErrorResponse } from '../_utils/utils';
 
+interface NotesParams {
+  page: number;
+  perPage: number;
+  search?: string;
+  tag?: string;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
     const search = request.nextUrl.searchParams.get('search') ?? '';
     const page = Number(request.nextUrl.searchParams.get('page') ?? 1);
     const rawTag = request.nextUrl.searchParams.get('tag') ?? '';
-    const tag = rawTag === 'All' ? '' : rawTag;
+    const tag = rawTag.toLowerCase() === 'all' ? '' : rawTag;
+
+    const params: NotesParams = {
+      page: isNaN(page) ? 1 : page,
+      perPage: 12,
+    };
+
+    if (search !== '') params.search = search;
+    if (tag !== '') params.tag = tag;
 
     const res = await api('/notes', {
-      params: {
-        ...(search !== '' && { search }),
-        page,
-        perPage: 12,
-        ...(tag && { tag }),
-      },
+      params,
       headers: {
         Cookie: cookieStore.toString(),
       },
@@ -30,7 +40,7 @@ export async function GET(request: NextRequest) {
       logErrorResponse(error.response?.data);
       return NextResponse.json(
         { error: error.message, response: error.response?.data },
-        { status: error.status }
+        { status: error.status || 500 }
       );
     }
     logErrorResponse({ message: (error as Error).message });
@@ -44,7 +54,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-
     const body = await request.json();
 
     const res = await api.post('/notes', body, {
@@ -60,7 +69,7 @@ export async function POST(request: NextRequest) {
       logErrorResponse(error.response?.data);
       return NextResponse.json(
         { error: error.message, response: error.response?.data },
-        { status: error.status }
+        { status: error.status || 500 }
       );
     }
     logErrorResponse({ message: (error as Error).message });

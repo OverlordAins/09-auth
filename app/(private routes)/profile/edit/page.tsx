@@ -1,96 +1,91 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getMe, updateMe } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 import css from './EditProfile.module.css';
-import Button from '@/components/Button/Button';
 
-export default function EditProfile() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [avatar, setAvatar] = useState('/default-avatar.png');
-  const [loading, setLoading] = useState(true);
-
+export default function EditProfilePage() {
   const router = useRouter();
   const setUser = useAuthStore(state => state.setUser);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getMe();
-        if (user) {
-          setUsername(user.username ?? '');
-          setEmail(user.email ?? '');
-          setAvatar(user.avatar ?? '/default-avatar.png');
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['me'],
+    queryFn: getMe,
+  });
 
-  const handleSaveUser = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const payload = { username, email };
-      const updatedUser = await updateMe(payload);
-
+  const mutation = useMutation({
+    mutationFn: updateMe,
+    onSuccess: updatedUser => {
       setUser(updatedUser);
-
       router.push('/profile');
-    } catch (error) {
-      console.error('Update profile error:', error);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newUsername = formData.get('username') as string;
+
+    if (newUsername.trim()) {
+      mutation.mutate({ username: newUsername });
     }
   };
 
-  const handleCancel = () => router.push('/profile');
+  if (isLoading) return <p>Loading...</p>;
 
-  if (loading) return <p>Loading...</p>;
+  const avatarUrl =
+    user?.avatar ||
+    'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg';
 
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <h1 className={css.formTitle}>Edit Profile</h1>
 
-        {avatar ? (
-          <Image
-            src={avatar}
-            alt="User Avatar"
-            width={120}
-            height={120}
-            className={css.avatar}
-          />
-        ) : (
-          <div className={css.avatarPlaceholder}>No Image</div>
-        )}
+        <Image
+          src={avatarUrl}
+          alt="User Avatar"
+          width={120}
+          height={120}
+          className={css.avatar}
+          priority
+          unoptimized
+        />
 
-        <form className={css.profileInfo} onSubmit={handleSaveUser}>
+        <form onSubmit={handleSubmit} className={css.profileInfo}>
           <div className={css.usernameWrapper}>
             <label htmlFor="username">Username:</label>
             <input
               id="username"
+              name="username"
               type="text"
               className={css.input}
-              value={username}
-              onChange={e => setUsername(e.target.value)}
+              key={user?.username}
+              defaultValue={user?.username || ''}
+              required
             />
           </div>
 
-          <p>Email: {email}</p>
+          <p>Email: {user?.email || 'user_email@example.com'}</p>
 
           <div className={css.actions}>
-            <Button type="submit" variant="submit">
-              Save
-            </Button>
-            <Button type="button" variant="cancel" onClick={handleCancel}>
+            <button
+              type="submit"
+              className={css.saveButton}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push('/profile')}
+              className={css.cancelButton}
+            >
               Cancel
-            </Button>
+            </button>
           </div>
         </form>
       </div>

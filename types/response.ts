@@ -1,9 +1,9 @@
-// import type { Note } from './note';
+import type { Note } from './note';
 
-// export interface FetchNotesResponse {
-//   notes: Note[];
-//   page: number;
-//   perPage: number;
-//   totalNotes: number;
-//   totalPages: number;
-// }
+export interface FetchNotesResponse {
+  notes: Note[];
+  page: number;
+  perPage: number;
+  totalNotes: number;
+  totalPages: number;
+}

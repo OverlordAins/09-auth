@@ -1,55 +1,51 @@
-import { getServerMe } from '@/lib/api/serverApi';
-import css from './Profile.module.css';
-import Button from '@/components/Button/Button';
-import Image from 'next/image';
 import { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { getMeServer } from '@/lib/api/serverApi';
+import { redirect } from 'next/navigation';
+import css from './Profile.module.css';
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Profile page',
-  description: 'User profile page with account details and settings.',
-  openGraph: {
-    title: 'Profile page',
-    description:
-      'Page for viewing and editing your user profile, including account information and avatar.',
-    url: 'https://09-auth-delta-sepia.vercel.app/profile',
-    images: [
-      {
-        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Profile page',
-      },
-    ],
-    type: 'website',
-  },
+  title: 'Profile | NoteHub',
+  description: 'View your personal profile information',
 };
 
-export default async function Profile() {
-  const user = await getServerMe();
-  console.log(user.avatar);
+export default async function ProfilePage() {
+  const user = await getMeServer();
+
+  if (!user) {
+    redirect('/sign-in');
+  }
 
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <div className={css.header}>
           <h1 className={css.formTitle}>Profile Page</h1>
-          <Button href={'/profile/edit'} variant="primary">
+          <Link href="/profile/edit" className={css.editProfileButton}>
             Edit Profile
-          </Button>
+          </Link>
         </div>
+
         <div className={css.avatarWrapper}>
           <Image
-            src={user.avatar}
+            src={user.avatar || '/default-avatar.png'}
             alt="User Avatar"
             width={120}
             height={120}
-            loading="eager"
             className={css.avatar}
+            priority
           />
         </div>
+
         <div className={css.profileInfo}>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
+          <p>
+            <strong>Username:</strong> {user.username}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
         </div>
       </div>
     </main>

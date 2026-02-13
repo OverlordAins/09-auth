@@ -1,58 +1,68 @@
+import { notFound } from 'next/navigation';
 import {
-  QueryClient,
-  HydrationBoundary,
   dehydrate,
+  HydrationBoundary,
+  QueryClient,
 } from '@tanstack/react-query';
-
 import { fetchNoteByIdServer } from '@/lib/api/serverApi';
 import NoteDetailsClient from './NoteDetails.client';
 import { Metadata } from 'next';
 
-interface NoteDetailsProps {
+interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: NoteDetailsProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const note = await fetchNoteByIdServer(id);
 
+  if (!note) {
+    return {
+      title: 'Note Not Found | NoteHub',
+    };
+  }
+
   return {
-    title: `Note: ${note.title}`,
-    description: note.content.slice(0, 30),
+    title: `${note.title} | NoteHub`,
+    description: note.content.substring(0, 150),
     openGraph: {
-      title: `Note: ${note.title}`,
-      description: note.content.slice(0, 100),
-      url: `https://09-auth-delta-sepia.vercel.app/notes/${id}`,
-      siteName: 'NoteHub',
+      title: note.title,
+      description: note.content.substring(0, 150),
+      url: `https://09-auth-delta-eosin.vercel.app/notes/${id}`,
       images: [
         {
-          url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
-          width: 1200,
-          height: 630,
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
           alt: note.title,
         },
       ],
-      type: 'article',
     },
   };
 }
 
-async function NoteDetails({ params }: NoteDetailsProps) {
+export default async function NotePage({ params }: Props) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ['note', id],
-    queryFn: () => fetchNoteByIdServer(id),
+    queryFn: async () => {
+      const data = await fetchNoteByIdServer(id);
+      if (!data) throw new Error('Note not found');
+      return data;
+    },
   });
 
+  const note = queryClient.getQueryData(['note', id]);
+
+  if (!note) {
+    return notFound();
+  }
+
+  const state = dehydrate(queryClient);
+
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient />
+    <HydrationBoundary state={state}>
+      <NoteDetailsClient id={id} />
     </HydrationBoundary>
   );
 }
-
-export default NoteDetails;

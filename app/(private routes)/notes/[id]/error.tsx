@@ -1,15 +1,17 @@
 'use client';
 
-type Props = {
-  error: Error;
-};
+interface ErrorPageProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
 
-const Error = ({ error }: Props) => {
+export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
-    <div>
-      <p>Could not fetch note details. {error.message}</p>
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <p>Could not fetch note details.</p>
+      <p style={{ color: 'red' }}>{error.message}</p>
+
+      <button onClick={reset}>Try again</button>
     </div>
   );
-};
-
-export default Error;
+}

@@ -1,4 +1,4 @@
-/* .listItem {
+.listItem {
   background: #ffffff;
   border-radius: 12px;
   padding: 20px;
@@ -6,7 +6,9 @@
   display: flex;
   flex-direction: column;
   min-height: 200px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   border: 1px solid #f0f0f0;
 }
 
@@ -73,4 +75,4 @@
 .detailsLink:hover {
   color: #1d4ed8;
   text-decoration: underline;
-} */
+}
