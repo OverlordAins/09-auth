@@ -14,7 +14,7 @@
 }
 
 .button:hover:not(:disabled) {
-  color: #121927;
+  color: #7fe0bb;
 }
 
 .button:disabled {
