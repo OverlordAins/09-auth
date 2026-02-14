@@ -13,16 +13,16 @@
 }
 
 .pageItem {
-  border: 1px solid #e0e0e0;
+  border: 3px solid #929292;
   border-radius: 6px;
   cursor: pointer;
-  min-width: 36px;
-  height: 36px;
+  min-width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
-  transition: all 0.2s;
+  transition: all 0.3s ease-in-out;
 }
 
 .pageItem:hover:not(.disabled) {
@@ -43,8 +43,8 @@
 }
 
 .active {
-  background-color: #0f69f0 !important;
-  border-color: #0f69f0 !important;
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
 }
 
 .active .pageLink {
@@ -52,6 +52,6 @@
 }
 
 .disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
 }

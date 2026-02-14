@@ -1,10 +1,10 @@
 .footer {
   padding: 18px;
-  background-color: #f7f0f0;
+  background-color: #b8b4b4;
   text-align: center;
   font-size: 14px;
   color: #585858;
-  border-top: 1px solid #e6e4e4;
+  border-top: 3px solid #e6e4e4;
 }
 
 .wrap {
@@ -14,7 +14,7 @@
 }
 
 .footer a {
-  color: #3d8ae2;
+  color: #1a6ac5;
   font-weight: 600;
   text-decoration: none;
 }

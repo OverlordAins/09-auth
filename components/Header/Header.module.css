@@ -12,11 +12,11 @@
   color: white;
   font-size: 2rem;
   font-weight: 700;
-  transition: color 0.2s;
+  transition: color 0.4s ease-in-out;
 }
 
 .logo:hover {
-  color: #e4e1e1;
+  color: #ca8e8e;
 }
 
 .navigation {
@@ -39,12 +39,12 @@
   cursor: pointer;
   font-family: inherit;
   font-weight: 700;
-  transition: color 0.2s;
+  transition: color 0.4s ease-in-out;
 }
 
 .navigation li a:hover,
 .navigation li button:hover {
-  color: #e9e6e6;
+  color: #ecf1f3;
 }
 
 .navigation li a:active,

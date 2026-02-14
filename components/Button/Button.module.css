@@ -6,9 +6,9 @@
   font-family: inherit;
   font-size: 1rem;
   font-weight: 400;
-  color: #4d5663;
+  color: #5d6674;
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
+  transition: color 0.4s ease-in-out;
   display: inline-flex;
   align-items: center;
 }

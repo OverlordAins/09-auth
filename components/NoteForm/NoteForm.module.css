@@ -1,14 +1,14 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 23px;
   width: 100%;
   max-width: 460px;
   margin: 0 auto;
   background: white;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
 .field {
@@ -18,7 +18,7 @@
 }
 
 .label {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   color: #444;
 }
@@ -31,7 +31,7 @@
   border-radius: 8px;
   font-size: 16px;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.4s ease-in-out;
   background-color: #f8fafc;
 }
 
@@ -66,8 +66,8 @@
   font-weight: 600;
   cursor: pointer;
   transition:
-    transform 0.1s,
-    background-color 0.2s;
+    transform 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
 }
 
 .buttonSubmit:hover {
@@ -91,7 +91,7 @@
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease-in-out;
 }
 
 .buttonCancel:hover {

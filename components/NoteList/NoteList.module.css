@@ -7,14 +7,14 @@
 }
 
 .noteCard {
-  border: 1px solid #d6dae4;
+  border: 3px solid #d6dae4;
   border-radius: 8px;
   padding: 20px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .title {
@@ -34,10 +34,10 @@
   display: inline-block;
   background-color: #ebeef5;
   color: #3e4757;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 5px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 20px;
   align-self: flex-start;
@@ -49,7 +49,7 @@
   align-items: center;
   margin-top: auto;
   padding-top: 15px;
-  border-top: 1px solid #ebeef5;
+  border-top: 3px solid #ebeef5;
 }
 
 @media (max-width: 1200px) {
